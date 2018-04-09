@@ -6,6 +6,7 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 
 public class MainMenu extends JPanel {
     private BufferedImage background;
@@ -54,7 +55,7 @@ public class MainMenu extends JPanel {
         super.add(this.options);
 
         try {
-            background = ImageIO.read(new File("src/mainMenuBackgrounds/background1.png"));
+            background = ImageIO.read(this.getClass().getResource("/mainMenuBackgrounds/background1.png"));
         } catch (IOException e) {
             e.printStackTrace();
         }

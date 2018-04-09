@@ -6,7 +6,6 @@ import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Random;
@@ -18,7 +17,7 @@ public class Board extends JPanel implements Runnable{
     private final int xOffsetBoard = 300;
     private final int yOffsetBoard = 100;
 
-    private final int xScoreLabel = 170;
+    private final int xScoreLabel = 175;
     private final int yScoreLabel = 460;
     private final int xScorePointsLabel = this.xScoreLabel + 25;
     private final int yScorePointsLabel = this.yScoreLabel + 10 + Tetromino.TETROMINO_BLOCK_SIZE;
@@ -30,7 +29,7 @@ public class Board extends JPanel implements Runnable{
 
     private final int xLinesScoredLabel = 175;
     private final int yLinesScoredLabel = 610;
-    private final int xLinesScoredValueLabel = this.xLinesScoredLabel + 20;
+    private final int xLinesScoredValueLabel = this.xLinesScoredLabel + 25;
     private final int yLinesScoredValueLabel = this.yLinesScoredLabel + 10 + Tetromino.TETROMINO_BLOCK_SIZE;
 
     private Thread thread;
@@ -63,7 +62,7 @@ public class Board extends JPanel implements Runnable{
         this.alreadyPussedChangeTetromino = false;
 
         try {
-            background = ImageIO.read(new File("src/backgrounds/background1.png"));
+            background = ImageIO.read(this.getClass().getResource("/backgrounds/background1.png"));
         } catch (IOException e) {
             e.printStackTrace();
         }
