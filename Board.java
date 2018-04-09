@@ -44,6 +44,7 @@ public class Board extends JPanel implements Runnable{
     private int linesScored;
     private boolean alreadyPussedChangeTetromino;
     private BufferedImage background;
+    private BufferedImage template;
 
     public Board(){
         super.setBackground(Color.BLACK);
@@ -62,7 +63,8 @@ public class Board extends JPanel implements Runnable{
         this.alreadyPussedChangeTetromino = false;
 
         try {
-            background = ImageIO.read(this.getClass().getResource("/backgrounds/background1.png"));
+            this.background = ImageIO.read(this.getClass().getResource("/backgrounds/background1.png"));
+            this.template = ImageIO.read(this.getClass().getResource("/backgrounds/template.png"));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -242,6 +244,7 @@ public class Board extends JPanel implements Runnable{
 
     private void paintBackground(Graphics g){
         g.drawImage(this.background, 0, 0, null);
+        g.drawImage(this.template, 0, 0, null);
     }
 
     private Color chooseColorForBlock(int id){
