@@ -32,6 +32,7 @@ public class Board extends JPanel implements Runnable{
     private final int xLinesScoredValueLabel = this.xLinesScoredLabel + 25;
     private final int yLinesScoredValueLabel = this.yLinesScoredLabel + 10 + Tetromino.TETROMINO_BLOCK_SIZE;
 
+    private JFrame frame;
     private Thread thread;
     private Tetromino tetromino;
     private Tetromino storedTetromino;
@@ -43,17 +44,19 @@ public class Board extends JPanel implements Runnable{
     private int speed;
     private int linesScored;
     private boolean alreadyPussedChangeTetromino;
+    static boolean playerAlive;
     private BufferedImage background;
     private BufferedImage template;
 
-    public Board(){
+    public Board(JFrame frame){
         super.setBackground(Color.BLACK);
         super.setFocusable(true);
 
+        this.frame = frame;
         this.thread = new Thread(this);
         this.tetromino = new Tetromino();
         this.storedTetromino = null;
-        this.fourNextTetrominos = asignFourTetrominos();
+        this.fourNextTetrominos = assignFourTetrominos();
         this.boardMatrix = new int[Board.BOARD_HEIGHT_IN_BLOCKS][Board.BOARD_WIDTH_IN_BLOCKS];
 
         this.score = 0;
@@ -61,6 +64,7 @@ public class Board extends JPanel implements Runnable{
         this.speed = 1000;
         this.linesScored = 0;
         this.alreadyPussedChangeTetromino = false;
+        this.playerAlive = true;
 
         try {
             this.background = ImageIO.read(this.getClass().getResource("/backgrounds/background1.png"));
@@ -73,7 +77,7 @@ public class Board extends JPanel implements Runnable{
         addControlsToGame();
     }
 
-    private int [][][] asignFourTetrominos(){
+    private int [][][] assignFourTetrominos(){
         int tetrominos [][][] = new int [4][4][4];
         tetrominos[0] = tetromino.getAllTetrominos()[new Random().nextInt(tetromino.getAllTetrominos().length)];
         tetrominos[1] = tetromino.getAllTetrominos()[new Random().nextInt(tetromino.getAllTetrominos().length)];
@@ -95,14 +99,17 @@ public class Board extends JPanel implements Runnable{
         paintCurrentTetromino(g);
         paintBoardLines(g);
         Main.paintInfo(g);
+        paintLoose(g);
     }
 
     @Override
     public void run() {
-        while (true) {
-            if (!tetromino.isAlive() || tetrominoCollidesOnBottom())
+        while (this.playerAlive) {
+            if (!tetromino.isAlive() || tetrominoCollidesOnBottom()){
                 createNewTetromino();
-            tetromino.applyGravity(1);
+            }
+            if(Board.playerAlive)
+                tetromino.applyGravity(1);
             repaint();
             try {
                 Thread.sleep(this.speed);
@@ -231,6 +238,14 @@ public class Board extends JPanel implements Runnable{
         g.drawString(String.valueOf(this.linesScored), this.xLinesScoredValueLabel, this.yLinesScoredValueLabel);
     }
 
+    private void paintLoose(Graphics g){
+        if(!Board.playerAlive){
+            g.setFont(Main.loose);
+            g.setColor(Color.WHITE);
+            g.drawString("You Loose", (int)(Main.JFRAME_WIDTH / 2.5), Main.JFRAME_HEIGHT / 2);
+        }
+    }
+
     private void paintBoardMatrix(Graphics g){
         for (int i = 0; i < Board.BOARD_HEIGHT_IN_BLOCKS; i++)
             for(int j = 0; j < Board.BOARD_WIDTH_IN_BLOCKS; j++){
@@ -272,19 +287,20 @@ public class Board extends JPanel implements Runnable{
 
             @Override
             public void keyPressed(KeyEvent e) {
-                if (e.getKeyCode() == KeyEvent.VK_SPACE) {
-                    spaceKeyPressed();
-                } else if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
-                    rightKeyPressed();
-                } else if (e.getKeyCode() == KeyEvent.VK_LEFT) {
-                    leftKeyPressed();
-                } else if (e.getKeyCode() == KeyEvent.VK_DOWN) {
-                    downKeyPressed();
-                } else if (e.getKeyCode() == KeyEvent.VK_UP){
-                    upKeyPressed();
-                }else if (e.getKeyCode() == KeyEvent.VK_C){
-                    cKeyPressed();
-                }
+                if(Board.playerAlive)
+                    if (e.getKeyCode() == KeyEvent.VK_SPACE) {
+                        spaceKeyPressed();
+                    } else if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
+                        rightKeyPressed();
+                    } else if (e.getKeyCode() == KeyEvent.VK_LEFT) {
+                        leftKeyPressed();
+                    } else if (e.getKeyCode() == KeyEvent.VK_DOWN) {
+                        downKeyPressed();
+                    } else if (e.getKeyCode() == KeyEvent.VK_UP){
+                        upKeyPressed();
+                    }else if (e.getKeyCode() == KeyEvent.VK_C){
+                        cKeyPressed();
+                    }
             }
 
             @Override
@@ -393,14 +409,29 @@ public class Board extends JPanel implements Runnable{
         return false;
     }
 
+    private boolean tetrominoOutOfBoard(){
+        for(int blocksPositions [] : tetromino.positionsToAttachToBoardMatrix()){
+            int positionInMatrixCoordinates [] = worldCoordinatesToBoardMatrixCoordinatesInBlocks(tetromino.getPosition());
+            positionInMatrixCoordinates[1] -= (Tetromino.TETROMINO_MATRIX_SIZE - 1) - blocksPositions[1];
+            if(positionInMatrixCoordinates[1] * Tetromino.TETROMINO_BLOCK_SIZE <= 0)
+                return true;
+        }
+        return false;
+    }
+
     //----------------------------------------------------------------------------------------------------------------\\
 
     private void createNewTetromino(){
-        attachTetrominoToBoardMatrix(tetromino);
-        removeRows();
-        this.tetromino = new Tetromino(fourNextTetrominos[0]);
-        this.alreadyPussedChangeTetromino = false;
-        reestructarateTetrominos();
+        if(!tetrominoOutOfBoard()){
+            attachTetrominoToBoardMatrix(tetromino);
+            removeRows();
+            this.tetromino = new Tetromino(fourNextTetrominos[0]);
+            this.alreadyPussedChangeTetromino = false;
+            reestructarateTetrominos();
+        }else{
+            Board.playerAlive = false;
+            addRetryAndMenuButton();
+        }
     }
 
     private void storeTetromino(){
@@ -531,5 +562,31 @@ public class Board extends JPanel implements Runnable{
                 this.speed -= 100;
             }
         }
+    }
+
+    //----------------------------------------------------------------------------------------------------------------\\
+
+    private void addRetryAndMenuButton(){
+        int buttonsWidth = 175;
+        int buttonsHeight = 65;
+        int yOffset = Main.JFRAME_HEIGHT / 3;
+        int spacing = (int)(buttonsHeight * 1.5f);
+
+        JButton retry = new JButton("RETRY");
+        retry.setFont(Main.mainFont);
+
+        retry.setBounds(Main.JFRAME_WIDTH / 2 - buttonsWidth / 2, Main.JFRAME_HEIGHT / 2 + buttonsHeight - yOffset,
+                buttonsWidth, buttonsHeight);
+        retry.addActionListener(e -> Main.loadScene(this.frame, new Board(this.frame)));
+
+        JButton back = new JButton("BACK");
+        back.setFont(Main.mainFont);
+
+        back.setBounds(Main.JFRAME_WIDTH / 2 - buttonsWidth / 2, retry.getY() + spacing, buttonsWidth, buttonsHeight);
+        back.addActionListener(e -> Main.loadScene(this.frame, new MainMenu(this.frame)));
+
+        super.setLayout(null);
+        super.add(retry);
+        super.add(back);
     }
 }
