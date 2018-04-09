@@ -11,4 +11,4 @@ TODO <br />
 Make the player loose when he/she reaches the top of the board with a piece.<br />
 Add sounds. <br />
 Add option to change the background.<br />
-~~Main menu~~, game screen, top scores screen, options screen.<br />
+~~Main menu~~, ~~game screen~~, top scores screen, options screen.<br />
