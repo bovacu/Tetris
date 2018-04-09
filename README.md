@@ -8,7 +8,8 @@ By the time I'm uploading the code the game is NOT complete.
 TODO <br />
 ~~Add key to drop directly a key to the bottom~~. <br />
 ~~Add key to change the tetromino and store it for later~~.<br />
-Make the player loose when he/she reaches the top of the board with a piece.<br />
+~~Make the player loose when he/she reaches the top of the board with a piece~~.<br />
+Make the tetromino shadow to see where it is going to fall. <br />
 Add sounds. <br />
 Add option to change the background.<br />
 ~~Main menu~~, ~~game screen~~, top scores screen, options screen.<br />
