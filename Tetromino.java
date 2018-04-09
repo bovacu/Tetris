@@ -92,6 +92,10 @@ public class Tetromino {
         return 0;
     }
 
+    public int [][] getCurrentTetrominio(){
+        return this.currentTetrominio;
+    }
+
     public int [] getPosition(){
         return new int[]{this.xPos, this.yPos};
     }

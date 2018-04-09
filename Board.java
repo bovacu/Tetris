@@ -35,7 +35,7 @@ public class Board extends JPanel implements Runnable{
 
     private Thread thread;
     private Tetromino tetromino;
-    private Font font;
+    private Tetromino storedTetromino;
     private int boardMatrix [][];
     private int fourNextTetrominos [][][];
 
@@ -43,6 +43,7 @@ public class Board extends JPanel implements Runnable{
     private int level;
     private int speed;
     private int linesScored;
+    private boolean alreadyPussedChangeTetromino;
     private BufferedImage background;
 
     public Board(){
@@ -51,21 +52,21 @@ public class Board extends JPanel implements Runnable{
 
         this.thread = new Thread(this);
         this.tetromino = new Tetromino();
+        this.storedTetromino = null;
         this.fourNextTetrominos = asignFourTetrominos();
-        this.font = new Font("Dialog", Font.PLAIN, 20);
         this.boardMatrix = new int[Board.BOARD_HEIGHT_IN_BLOCKS][Board.BOARD_WIDTH_IN_BLOCKS];
 
         this.score = 0;
         this.level = 0;
         this.speed = 1000;
         this.linesScored = 0;
+        this.alreadyPussedChangeTetromino = false;
 
         try {
-            background = ImageIO.read(new File("src/backgrounds/background3.png"));
+            background = ImageIO.read(new File("src/backgrounds/background1.png"));
         } catch (IOException e) {
             e.printStackTrace();
         }
-
 
         this.thread.start();
         addControlsToGame();
@@ -85,11 +86,14 @@ public class Board extends JPanel implements Runnable{
         paintBoard(g);
         paintBackground(g);
         paintFourNextTetrominos(g);
+        paintStoredTetromino(g);
+        paintStoredTetrominoLines(g);
         paintNextTetrominosLines(g);
         paintTexts(g);
         paintBoardMatrix(g);
         paintCurrentTetromino(g);
         paintBoardLines(g);
+        Main.paintInfo(g);
     }
 
     @Override
@@ -143,6 +147,24 @@ public class Board extends JPanel implements Runnable{
         }
     }
 
+    private void paintStoredTetromino(Graphics g){
+        int x = 150;
+        int y = 125;
+        if(this.storedTetromino != null)
+            for(int i = 0; i < Tetromino.TETROMINO_MATRIX_SIZE; i++){
+                for(int j = 0; j < Tetromino.TETROMINO_MATRIX_SIZE; j++){
+                    if (this.storedTetromino.getCurrentTetrominio()[i][j] != 0) {
+                        g.setColor(chooseColorForBlock(this.storedTetromino.getCurrentTetrominio()[i][j]));
+                        g.fillRect(j * Tetromino.TETROMINO_BLOCK_SIZE + x +
+                                        (1 - this.storedTetromino.getMatrixColumnsWithoutBlocksOnLeftHalf())
+                                                * Tetromino.TETROMINO_BLOCK_SIZE
+                                , i * Tetromino.TETROMINO_BLOCK_SIZE + y,
+                                Tetromino.TETROMINO_BLOCK_SIZE, Tetromino.TETROMINO_BLOCK_SIZE);
+                    }
+                }
+            }
+    }
+
     private void paintBoardLines(Graphics g){
         g.setColor(Color.GRAY);
         for (int i = 0; i < Board.BOARD_HEIGHT_IN_BLOCKS; i++) {
@@ -173,8 +195,29 @@ public class Board extends JPanel implements Runnable{
         }
     }
 
+    private void paintStoredTetrominoLines(Graphics g){
+        g.setColor(Color.GRAY);
+        int xOffsetToGoal = 150;
+        int yOffsetToGoal = 150;
+        int squareWidthAndHeight = 4;
+        int x1 = xOffsetToGoal;
+        int x2 = x1 + squareWidthAndHeight * Tetromino.TETROMINO_BLOCK_SIZE;
+
+        for (int i = 0; i < squareWidthAndHeight; i++) {
+            g.drawLine(x1, i * Tetromino.TETROMINO_BLOCK_SIZE + yOffsetToGoal, x2, i *
+                    Tetromino.TETROMINO_BLOCK_SIZE + yOffsetToGoal);
+        }
+
+        int y1 = yOffsetToGoal;
+        int y2 = yOffsetToGoal + squareWidthAndHeight * Tetromino.TETROMINO_BLOCK_SIZE;
+        for (int i = 0; i < squareWidthAndHeight; i++) {
+            g.drawLine(i * Tetromino.TETROMINO_BLOCK_SIZE + xOffsetToGoal, y1,
+                    i * Tetromino.TETROMINO_BLOCK_SIZE + xOffsetToGoal, y2);
+        }
+    }
+
     private void paintTexts(Graphics g){
-        g.setFont(this.font);
+        g.setFont(Main.mainFont);
         g.setColor(Color.WHITE);
 
         g.drawString("SCORE", this.xScoreLabel, this.yScoreLabel);
@@ -235,6 +278,10 @@ public class Board extends JPanel implements Runnable{
                     leftKeyPressed();
                 } else if (e.getKeyCode() == KeyEvent.VK_DOWN) {
                     downKeyPressed();
+                } else if (e.getKeyCode() == KeyEvent.VK_UP){
+                    upKeyPressed();
+                }else if (e.getKeyCode() == KeyEvent.VK_C){
+                    cKeyPressed();
                 }
             }
 
@@ -295,6 +342,24 @@ public class Board extends JPanel implements Runnable{
         repaint();
     }
 
+    private void upKeyPressed(){
+        while(!tetrominoCollidesOnBottom() && tetromino.isAlive()){
+            tetromino.applyGravity(1);
+        }
+        createNewTetromino();
+        repaint();
+    }
+
+    private void cKeyPressed(){
+        if (!this.alreadyPussedChangeTetromino){
+            if (this.storedTetromino == null)
+                storeTetromino();
+            else
+                replaceTetromino();
+
+        }
+    }
+
     //----------------------------------------------------------------------------------------------------------------\\
 
     private boolean checkIfTetrominoCollidesOnAxisX(int direction){
@@ -332,6 +397,22 @@ public class Board extends JPanel implements Runnable{
         attachTetrominoToBoardMatrix(tetromino);
         removeRows();
         this.tetromino = new Tetromino(fourNextTetrominos[0]);
+        this.alreadyPussedChangeTetromino = false;
+        reestructarateTetrominos();
+    }
+
+    private void storeTetromino(){
+        this.storedTetromino = tetromino;
+        this.alreadyPussedChangeTetromino = true;
+        this.tetromino = new Tetromino(fourNextTetrominos[0]);
+        reestructarateTetrominos();
+    }
+
+    private void replaceTetromino(){
+        Tetromino aux = this.tetromino;
+        this.tetromino = new Tetromino(this.storedTetromino.getCurrentTetrominio());
+        this.storedTetromino = aux;
+        this.alreadyPussedChangeTetromino = true;
         reestructarateTetrominos();
     }
 
