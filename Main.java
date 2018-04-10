@@ -3,6 +3,11 @@ package main;
 import javax.swing.*;
 import java.awt.*;
 
+/**
+ * @author Borja Vazquez
+ * @version 1.1.3
+ */
+
 public class Main extends JFrame{
 
     static final int JFRAME_WIDTH = 900;
@@ -47,6 +52,6 @@ public class Main extends JFrame{
         int y = 740;
         g.setColor(Color.GRAY);
         g.setFont(Main.info);
-        g.drawString("Author: Borja Vazquez, Version: 1.1.0, Github: bovacu", x, y);
+        g.drawString("Author: Borja Vazquez, Version: 1.1.3, Github: bovacu", x, y);
     }
 }

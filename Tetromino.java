@@ -3,16 +3,8 @@ package main;
 import java.awt.*;
 import java.util.Random;
 
-/**
-    IF YOU WANT TO ADD CUSTOM TETROMINOS YOU HAVE TO:
-    1. THE TETROMINO (FOR NOW) MUST BE 4x4
-        1.1. ADD IT WITH THE DEFAULT POSITION TO THE MATRIX
-        1.2. ADD THE ROTATIONS WITH A NEW METHOD AND ADD IT TO SPIN TETROMINO
-        1.3. ADD THE COLOR TO THE CHOOSECOLORFORTETROMINO() METHOD
-        1.4. IN BOARD.JAVA, ADD ALSO THE COLOR TO THE CHOOSECOLORFORBLOCK() METHOD
- **/
-
 public class Tetromino {
+
     public static final int TETROMINO_BLOCK_SIZE = 25;
     public static final int TETROMINO_MATRIX_SIZE = 4; // If this value is changed, every matrix MUST be changed to a TETROMINIO_MATRIX_SIZE x TETROMINIO_MATRIX_SIZE matrix
 

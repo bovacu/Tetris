@@ -11,6 +11,8 @@ import java.util.ArrayList;
 import java.util.Random;
 
 public class Board extends JPanel implements Runnable{
+
+
     public static final int BOARD_WIDTH_IN_BLOCKS = 12;
     public static final int BOARD_HEIGHT_IN_BLOCKS = 23;
 
@@ -86,9 +88,9 @@ public class Board extends JPanel implements Runnable{
         return tetrominos;
     }
 
+    @Override
     public void paintComponent(Graphics g){
         super.paintComponent(g);
-        paintBoard(g);
         paintBackground(g);
         paintFourNextTetrominos(g);
         paintStoredTetromino(g);
@@ -117,12 +119,6 @@ public class Board extends JPanel implements Runnable{
                 ex.printStackTrace();
             }
         }
-    }
-
-    private void paintBoard(Graphics g){
-        g.setColor(Color.BLACK);
-        g.fillRect(this.xOffsetBoard, this.yOffsetBoard, Board.BOARD_WIDTH_IN_BLOCKS * Tetromino.TETROMINO_BLOCK_SIZE,
-                Board.BOARD_HEIGHT_IN_BLOCKS * Tetromino.TETROMINO_BLOCK_SIZE);
     }
 
     private void paintCurrentTetromino(Graphics g){
