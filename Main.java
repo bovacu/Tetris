@@ -3,6 +3,11 @@ package main;
 import javax.swing.*;
 import java.awt.*;
 
+/**
+ * @author Borja Vazquez
+ * @version 1.1.2
+ */
+
 public class Main extends JFrame{
 
     static final int JFRAME_WIDTH = 900;
@@ -25,6 +30,10 @@ public class Main extends JFrame{
         frame.setVisible(true);
     }
 
+    /**
+     * Centers the game window in the middle of the screen
+     * @param f Is the reference to the main JFrame
+     */
     public static void centerWindow(JFrame f){
         Dimension windowSize = f.getPreferredSize();
         Dimension pos = Toolkit.getDefaultToolkit().getScreenSize();
@@ -35,6 +44,11 @@ public class Main extends JFrame{
 
     }
 
+    /**
+     * Loads the JPanel that is passed as parameter on the JFrame
+     * @param frame Is the reference to the main JFrame
+     * @param panel The scene (JPanel) that we want to load (Main menu, Options, Play, High Scores...)
+     */
     public static void loadScene(JFrame frame, JPanel panel){
         frame.setContentPane(panel);
         frame.invalidate();
@@ -42,11 +56,15 @@ public class Main extends JFrame{
         panel.requestFocus();
     }
 
+    /**
+     * Paints the info of the current state of the game. Version, author and github name of author
+     * @param g This will be used to paint the info in any paintComponent() method
+     */
     public static void paintInfo(Graphics g){
         int x = 5;
         int y = 740;
         g.setColor(Color.GRAY);
         g.setFont(Main.info);
-        g.drawString("Author: Borja Vazquez, Version: 1.1.0, Github: bovacu", x, y);
+        g.drawString("Author: Borja Vazquez, Version: 1.1.3, Github: bovacu", x, y);
     }
 }

@@ -10,7 +10,14 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Random;
 
+/**
+ * @author Borja Vazquez
+ * @version 1.1.2
+ */
+
 public class Board extends JPanel implements Runnable{
+
+
     public static final int BOARD_WIDTH_IN_BLOCKS = 12;
     public static final int BOARD_HEIGHT_IN_BLOCKS = 23;
 
@@ -48,6 +55,10 @@ public class Board extends JPanel implements Runnable{
     private BufferedImage background;
     private BufferedImage template;
 
+    /**
+     * Constructor to create the Board. Sets some attributes to default values, starts the Thread and loads images.
+     * @param frame The main JFrame of the application
+     */
     public Board(JFrame frame){
         super.setBackground(Color.BLACK);
         super.setFocusable(true);
@@ -77,6 +88,10 @@ public class Board extends JPanel implements Runnable{
         addControlsToGame();
     }
 
+    /**
+     * Method to set the Tetrominos that will come after the current one.
+     * @return a list of matrix of the four next randomly selected Tetrominos.
+     */
     private int [][][] assignFourTetrominos(){
         int tetrominos [][][] = new int [4][4][4];
         tetrominos[0] = tetromino.getAllTetrominos()[new Random().nextInt(tetromino.getAllTetrominos().length)];
@@ -86,9 +101,13 @@ public class Board extends JPanel implements Runnable{
         return tetrominos;
     }
 
+    /**
+     * Method override from JPanel to paint everything in the game.
+     * @param g references the Graphic object that paints everything.
+     */
+    @Override
     public void paintComponent(Graphics g){
         super.paintComponent(g);
-        paintBoard(g);
         paintBackground(g);
         paintFourNextTetrominos(g);
         paintStoredTetromino(g);
@@ -102,6 +121,9 @@ public class Board extends JPanel implements Runnable{
         paintLoose(g);
     }
 
+    /**
+     * Method implemented from Runnable class that makes work all mechanics.
+     */
     @Override
     public void run() {
         while (this.playerAlive) {
@@ -119,12 +141,10 @@ public class Board extends JPanel implements Runnable{
         }
     }
 
-    private void paintBoard(Graphics g){
-        g.setColor(Color.BLACK);
-        g.fillRect(this.xOffsetBoard, this.yOffsetBoard, Board.BOARD_WIDTH_IN_BLOCKS * Tetromino.TETROMINO_BLOCK_SIZE,
-                Board.BOARD_HEIGHT_IN_BLOCKS * Tetromino.TETROMINO_BLOCK_SIZE);
-    }
-
+    /**
+     * Method to paint the current Tetromino.
+     * @param g references the Graphic object that paints everything.
+     */
     private void paintCurrentTetromino(Graphics g){
         for (int i = 0; i < Tetromino.TETROMINO_MATRIX_SIZE; i++) {
             for (int j = 0; j < Tetromino.TETROMINO_MATRIX_SIZE; j++) {
@@ -137,6 +157,11 @@ public class Board extends JPanel implements Runnable{
         }
     }
 
+    /**
+     * Method to paint the Tetrominos on the right column.
+     * @param g references the Graphic object that paints everything.
+     * @see #chooseColorForBlock(int)
+     */
     private void paintFourNextTetrominos(Graphics g){
         int x = 650;
         int y = 150;
@@ -155,6 +180,11 @@ public class Board extends JPanel implements Runnable{
         }
     }
 
+    /**
+     * Method to paint each block of the Tetrominos attached to the Board matrix.
+     * @param g references the Graphic object that paints everything.
+     * @see #chooseColorForBlock(int)
+     */
     private void paintStoredTetromino(Graphics g){
         int x = 150;
         int y = 125;
@@ -173,6 +203,10 @@ public class Board extends JPanel implements Runnable{
             }
     }
 
+    /**
+     * Method to paint the main rectangle grid lines.
+     * @param g references the Graphic object that paints everything.
+     */
     private void paintBoardLines(Graphics g){
         g.setColor(Color.GRAY);
         for (int i = 0; i < Board.BOARD_HEIGHT_IN_BLOCKS; i++) {
@@ -186,6 +220,10 @@ public class Board extends JPanel implements Runnable{
         }
     }
 
+    /**
+     * Method to paint right rectangle grid lines of next Tetrominos.
+     * @param g references the Graphic object that paints everything.
+     */
     private void paintNextTetrominosLines(Graphics g){
         g.setColor(Color.GRAY);
         int x1 = this.xOffsetBoard + Board.BOARD_WIDTH_IN_BLOCKS * Tetromino.TETROMINO_BLOCK_SIZE +
@@ -203,6 +241,10 @@ public class Board extends JPanel implements Runnable{
         }
     }
 
+    /**
+     * Method to paint the right rectangle grid lines that stores a Tetromino.
+     * @param g references the Graphic object that paints everything.
+     */
     private void paintStoredTetrominoLines(Graphics g){
         g.setColor(Color.GRAY);
         int xOffsetToGoal = 150;
@@ -224,6 +266,10 @@ public class Board extends JPanel implements Runnable{
         }
     }
 
+    /**
+     * Method to paint the texts of the scene.
+     * @param g references the Graphic object that paints everything.
+     */
     private void paintTexts(Graphics g){
         g.setFont(Main.mainFont);
         g.setColor(Color.WHITE);
@@ -238,6 +284,10 @@ public class Board extends JPanel implements Runnable{
         g.drawString(String.valueOf(this.linesScored), this.xLinesScoredValueLabel, this.yLinesScoredValueLabel);
     }
 
+    /**
+     * Method to paint the You Loose text.
+     * @param g references the Graphic object that paints everything.
+     */
     private void paintLoose(Graphics g){
         if(!Board.playerAlive){
             g.setFont(Main.loose);
@@ -246,6 +296,11 @@ public class Board extends JPanel implements Runnable{
         }
     }
 
+    /**
+     * Method to paint all the values of the matrix, with a specific color depending on the stored value.
+     * @param g references the Graphic object that paints everything.
+     * @see #chooseColorForBlock(int)
+     */
     private void paintBoardMatrix(Graphics g){
         for (int i = 0; i < Board.BOARD_HEIGHT_IN_BLOCKS; i++)
             for(int j = 0; j < Board.BOARD_WIDTH_IN_BLOCKS; j++){
@@ -257,11 +312,20 @@ public class Board extends JPanel implements Runnable{
             }
     }
 
+    /**
+     * Method to paint both images, the background and the template of the main rectangle, next Tetros rect and stored rect.
+     * @param g references the Graphic object that paints everything.
+     */
     private void paintBackground(Graphics g){
         g.drawImage(this.background, 0, 0, null);
         g.drawImage(this.template, 0, 0, null);
     }
 
+    /**
+     * Method to give a Color depending on the param.
+     * @param id returns a Color depending on the id.
+     * @return Returns the Color.
+     */
     private Color chooseColorForBlock(int id){
         switch (id){
             case 1 : return Color.YELLOW;
@@ -276,7 +340,15 @@ public class Board extends JPanel implements Runnable{
     }
 
     //----------------------------------------------------------------------------------------------------------------\\
-
+    /**
+     * Method to add a keyListener to the JPanel.
+     * @see #spaceKeyPressed()
+     * @see #rightKeyPressed()
+     * @see #leftKeyPressed()
+     * @see #downKeyPressed()
+     * @see #upKeyPressed()
+     * @see #cKeyPressed()
+     */
     private void addControlsToGame(){
         super.addKeyListener(new KeyListener() {
             @Override
@@ -312,6 +384,9 @@ public class Board extends JPanel implements Runnable{
         });
     }
 
+    /**
+     * Method to spin the Tetromino and ensures that on any spin, the Tetromino won't go out of the board.
+     */
     private void spaceKeyPressed(){
         tetromino.spinTetrominio();
         int xCountingFromFirstBlockOnLeft = tetromino.getMatrixColumnsWithoutBlocksOnLeftHalf() *
@@ -332,6 +407,9 @@ public class Board extends JPanel implements Runnable{
         repaint();
     }
 
+    /**
+     * Method to move the Tetromino to the right and ensures it won't go out of the board on the right side.
+     */
     private void rightKeyPressed(){
         int xCountingFromFirstBlockOnLeft = tetromino.getMatrixColumnsWithoutBlocksOnLeftHalf() *
                 Tetromino.TETROMINO_BLOCK_SIZE + tetromino.getPosition()[0];
@@ -344,6 +422,9 @@ public class Board extends JPanel implements Runnable{
         repaint();
     }
 
+    /**
+     * Method to move the Tetromino to the left and ensures it won't go out of the board on the left side.
+     */
     private void leftKeyPressed(){
         if ((tetromino.getPosition()[0] > 0 - Tetromino.TETROMINO_BLOCK_SIZE *
                 tetromino.getMatrixColumnsWithoutBlocksOnLeftHalf()) && !checkIfTetrominoCollidesOnAxisX(-1))
@@ -352,6 +433,11 @@ public class Board extends JPanel implements Runnable{
         repaint();
     }
 
+    /**
+     * Method to move the Tetromino faster down and ensures it won't go out of the board on bottom.
+     * @see #tetrominoCollidesOnBottom()
+     * @see #createNewTetromino()
+     */
     private void downKeyPressed(){
         if (!tetromino.isAlive() || tetrominoCollidesOnBottom())
             createNewTetromino();
@@ -360,6 +446,11 @@ public class Board extends JPanel implements Runnable{
         repaint();
     }
 
+    /**
+     * Method to move the Tetromino directly to the bottom.
+     * @see #tetrominoCollidesOnBottom()
+     * @see #createNewTetromino()
+     */
     private void upKeyPressed(){
         while(!tetrominoCollidesOnBottom() && tetromino.isAlive()){
             tetromino.applyGravity(1);
@@ -368,6 +459,11 @@ public class Board extends JPanel implements Runnable{
         repaint();
     }
 
+    /**
+     * Method to change the Tetromino and ensures that only one change can be done per play.
+     * @see #storeTetromino()
+     * @see #replaceTetromino()
+     */
     private void cKeyPressed(){
         if (!this.alreadyPussedChangeTetromino){
             if (this.storedTetromino == null)
@@ -380,6 +476,12 @@ public class Board extends JPanel implements Runnable{
 
     //----------------------------------------------------------------------------------------------------------------\\
 
+    /**
+     * Method to check if the Tetromino will collide on the next move on X axis.
+     * @param direction 1 if want to check right collision, -1 if want to detect left collision.
+     * @return True if is going to collide, false if it's not going to collide.
+     * @see #worldCoordinatesToBoardMatrixCoordinatesInBlocks(int[])
+     */
     private boolean checkIfTetrominoCollidesOnAxisX(int direction){
         for(int blocksPositions [] : tetromino.positionsToAttachToBoardMatrix()){
             int positionInMatrixCoordinates [] = worldCoordinatesToBoardMatrixCoordinatesInBlocks(tetromino.getPosition());
@@ -395,6 +497,11 @@ public class Board extends JPanel implements Runnable{
         return false;
     }
 
+    /**
+     * Method to check if the Tetromino will collide on the row below with any block.
+     * @return True if is going to collide, false if it's not going to collide.
+     * @see #worldCoordinatesToBoardMatrixCoordinatesInBlocks(int[])
+     */
     private boolean tetrominoCollidesOnBottom(){
         for(int blocksPositions [] : tetromino.positionsToAttachToBoardMatrix()){
             int positionInMatrixCoordinates [] = worldCoordinatesToBoardMatrixCoordinatesInBlocks(tetromino.getPosition());
@@ -409,6 +516,11 @@ public class Board extends JPanel implements Runnable{
         return false;
     }
 
+    /**
+     * Method to check if the Tetromino is going to go out of the board.
+     * @return True if is going to go out, false if it's not.
+     * @see #worldCoordinatesToBoardMatrixCoordinatesInBlocks(int[])
+     */
     private boolean tetrominoOutOfBoard(){
         for(int blocksPositions [] : tetromino.positionsToAttachToBoardMatrix()){
             int positionInMatrixCoordinates [] = worldCoordinatesToBoardMatrixCoordinatesInBlocks(tetromino.getPosition());
@@ -421,6 +533,14 @@ public class Board extends JPanel implements Runnable{
 
     //----------------------------------------------------------------------------------------------------------------\\
 
+    /**
+     * Method to create a new Tetromino.
+     * @see #tetrominoOutOfBoard()
+     * @see #attachTetrominoToBoardMatrix(Tetromino)
+     * @see #removeRows()
+     * @see #reestructarateTetrominos()
+     * @see #addRetryAndMenuButton()
+     */
     private void createNewTetromino(){
         if(!tetrominoOutOfBoard()){
             attachTetrominoToBoardMatrix(tetromino);
@@ -434,6 +554,10 @@ public class Board extends JPanel implements Runnable{
         }
     }
 
+    /**
+     * Method to store a tetromino for later so you can change it for your current one.
+     * @see #reestructarateTetrominos()
+     */
     private void storeTetromino(){
         this.storedTetromino = tetromino;
         this.alreadyPussedChangeTetromino = true;
@@ -441,6 +565,10 @@ public class Board extends JPanel implements Runnable{
         reestructarateTetrominos();
     }
 
+    /**
+     * Method to change the current Tetromino with the one that is stored, if there's one stored.
+     * @see #reestructarateTetrominos()
+     */
     private void replaceTetromino(){
         Tetromino aux = this.tetromino;
         this.tetromino = new Tetromino(this.storedTetromino.getCurrentTetrominio());
@@ -449,6 +577,9 @@ public class Board extends JPanel implements Runnable{
         reestructarateTetrominos();
     }
 
+    /**
+     * Method to update the next Tetrominos each time a new Tetromino is created.
+     */
     private void reestructarateTetrominos(){
         int tet1 [][] = fourNextTetrominos[1];
         int tet2 [][] = fourNextTetrominos[2];
@@ -462,12 +593,22 @@ public class Board extends JPanel implements Runnable{
 
     }
 
+    /**
+     * Method to convert WORLD coordinates to MATRIX coordinates.
+     * @param positionInWorldCoordinates The position of the current Tetromino
+     * @return An array that stores the Tetromino coordinates in MATRIX coordinates
+     */
     private int[] worldCoordinatesToBoardMatrixCoordinatesInBlocks(int[] positionInWorldCoordinates){
         int [] boardMatrixBlocksCoordinates = {positionInWorldCoordinates[0] / Tetromino.TETROMINO_BLOCK_SIZE,
                 (positionInWorldCoordinates[1] / Tetromino.TETROMINO_BLOCK_SIZE) - 1};
         return boardMatrixBlocksCoordinates;
     }
 
+    /**
+     * Method to put the current Tetromino's matrix's values into the board's matrix.
+     * @param tetromino The current Tetromino
+     * @see #worldCoordinatesToBoardMatrixCoordinatesInBlocks(int[])
+     */
     private void attachTetrominoToBoardMatrix(Tetromino tetromino){
         int tetrominoPosition [] = {tetromino.getPosition()[0], tetromino.getPosition()[1]};
         int blocksPositions [][] = tetromino.positionsToAttachToBoardMatrix();
@@ -481,6 +622,12 @@ public class Board extends JPanel implements Runnable{
 
     //----------------------------------------------------------------------------------------------------------------\\
 
+    /**
+     * Method to remove rows when are full of not zeros.
+     * @see #scorePoints(int)
+     * @see #levelUp()
+     * @see #dropRow(int)
+     */
     private void removeRows(){
         int filledRows [] = iPositionOfFilledRows();
         int firstRow = 0;
@@ -498,6 +645,10 @@ public class Board extends JPanel implements Runnable{
         }
     }
 
+    /**
+     * Method to get the y coordinate of each full row.
+     * @return Returns an array of the row number of each full row.
+     */
     private int[] iPositionOfFilledRows(){
         ArrayList<Integer> rows = new ArrayList<>();
         for(int i = 0; i < Board.BOARD_HEIGHT_IN_BLOCKS; i++){
@@ -516,6 +667,12 @@ public class Board extends JPanel implements Runnable{
         return arr;
     }
 
+    /**
+     * Method to drop all rows that are over the row that has been removed.
+     * @param firstRow Y coordinate of the first row over the one removed.
+     * @see #removeRows()
+     * @see #dropElement(int, int)
+     */
     private void dropRow(int firstRow){
         firstRow--;
         boolean noTetrominoOver = true;
@@ -531,6 +688,11 @@ public class Board extends JPanel implements Runnable{
         removeRows();
     }
 
+    /**
+     * Method to drop each block as down as possible.
+     * @param i The x position on the matrix.
+     * @param j The y position on the matrix
+     */
     private void dropElement(int i, int j){
         int block = this.boardMatrix[i][j];
         while(this.boardMatrix[i + 1][j] == 0){
@@ -545,6 +707,11 @@ public class Board extends JPanel implements Runnable{
 
     //----------------------------------------------------------------------------------------------------------------\\
 
+    /**
+     * Method to return the score each time rows are removed.
+     * @param numberOfRows The number of rows that has been removed.
+     * @return The scored assign to the number of rows removed.
+     */
     private int scorePoints(int numberOfRows){
         switch (numberOfRows){
             case 1 : return 40*(this.level + 1);
@@ -555,6 +722,9 @@ public class Board extends JPanel implements Runnable{
         return 0;
     }
 
+    /**
+     * Method to increase the game level.
+     */
     private void levelUp(){
         if(linesScored > this.level * 10 + 10){
             this.level++;
@@ -566,6 +736,9 @@ public class Board extends JPanel implements Runnable{
 
     //----------------------------------------------------------------------------------------------------------------\\
 
+    /**
+     * Method to add the buttons of retry and return when you loose.
+     */
     private void addRetryAndMenuButton(){
         int buttonsWidth = 175;
         int buttonsHeight = 65;

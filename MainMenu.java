@@ -6,6 +6,11 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 
+/**
+ * @author Borja Vazquez
+ * @version 1.1.2
+ */
+
 public class MainMenu extends JPanel {
     private BufferedImage background;
     private JFrame frame;
