@@ -65,7 +65,7 @@ public class Tetromino {
         this.id = idGetter();
         this.spin = 0;
         this.xPos = 150;
-        this.yPos = (Tetromino.TETROMINO_MATRIX_SIZE - getMatrixRowsWithoutBlocksOnUpHalf() - 1) * Tetromino.TETROMINO_BLOCK_SIZE;
+        this.yPos = (getMatrixRowsWithoutBlocksOnDownHalf() - 1) * Tetromino.TETROMINO_BLOCK_SIZE;
         chooseColorForTetrominio();
     }
 
@@ -74,7 +74,7 @@ public class Tetromino {
         this.id = idGetter();
         this.spin = 0;
         this.xPos = 150;
-        this.yPos = (Tetromino.TETROMINO_MATRIX_SIZE - getMatrixRowsWithoutBlocksOnUpHalf() - 1) * Tetromino.TETROMINO_BLOCK_SIZE;
+        this.yPos = (getMatrixRowsWithoutBlocksOnDownHalf() - 1) * Tetromino.TETROMINO_BLOCK_SIZE;
         chooseColorForTetrominio();
     }
 
