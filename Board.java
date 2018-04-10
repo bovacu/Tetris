@@ -442,7 +442,6 @@ public class Board extends JPanel implements Runnable{
         this.tetromino = new Tetromino(this.storedTetromino.getCurrentTetrominio());
         this.storedTetromino = aux;
         this.alreadyPussedChangeTetromino = true;
-        reestructarateTetrominos();
     }
 
     private void reestructarateTetrominos(){
