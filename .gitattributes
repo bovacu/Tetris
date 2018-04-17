@@ -1,1 +1,3 @@
-*.rb linguist-language=Java
+API/*.html linguist-language=Java
+API/index-flies/*.html linguist-language=Java
+API/main/*.html linguist-language=Java
