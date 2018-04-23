@@ -52,6 +52,6 @@ public class Main extends JFrame{
         int y = 740;
         g.setColor(Color.GRAY);
         g.setFont(Main.info);
-        g.drawString("Author: Borja Vazquez, Version: 1.1.3, Github: bovacu", x, y);
+        g.drawString("Author: Borja Vazquez, Version: 1.1.4, Github: bovacu", x, y);
     }
 }
