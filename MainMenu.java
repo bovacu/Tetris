@@ -4,7 +4,9 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.Properties;
 
 public class MainMenu extends JPanel {
     private BufferedImage background;
@@ -51,7 +53,12 @@ public class MainMenu extends JPanel {
         super.add(this.play);
         super.add(this.highscores);
         super.add(this.options);
-
+        Properties p = new Properties();
+//        try {
+//            p.load(new FileInputStream(this.getClass().getResource("/settings/options.properties").getPath()));
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
         try {
             background = ImageIO.read(this.getClass().getResource("/backgrounds/background1.png"));
         } catch (IOException e) {

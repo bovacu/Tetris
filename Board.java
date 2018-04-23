@@ -47,6 +47,7 @@ public class Board extends JPanel implements Runnable{
     private int linesScored;
     private boolean alreadyPussedChangeTetromino;
     static boolean playerAlive;
+    static boolean pause;
     private BufferedImage background;
     private BufferedImage template;
 
@@ -67,6 +68,7 @@ public class Board extends JPanel implements Runnable{
         this.linesScored = 0;
         this.alreadyPussedChangeTetromino = false;
         this.playerAlive = true;
+        Board.pause = false;
 
         try {
             this.background = ImageIO.read(this.getClass().getResource("/backgrounds/background1.png"));
@@ -106,17 +108,21 @@ public class Board extends JPanel implements Runnable{
 
     @Override
     public void run() {
+
         while (this.playerAlive) {
-            if (!tetromino.isAlive() || tetrominoCollidesOnBottom()){
-                createNewTetromino();
-            }
-            if(Board.playerAlive)
-                tetromino.applyGravity(1);
-            repaint();
-            try {
-                Thread.sleep(this.speed);
-            } catch (InterruptedException ex) {
-                ex.printStackTrace();
+            System.out.println(pause);
+            if(!pause){
+                if (!tetromino.isAlive() || tetrominoCollidesOnBottom()){
+                    createNewTetromino();
+                }
+                if(Board.playerAlive)
+                    tetromino.applyGravity(1);
+                repaint();
+                try {
+                    Thread.sleep(this.speed);
+                } catch (InterruptedException ex) {
+                    ex.printStackTrace();
+                }
             }
         }
     }
@@ -153,12 +159,12 @@ public class Board extends JPanel implements Runnable{
 
     private void paintStoredTetromino(Graphics g){
         int x = 150;
-        int y = 125;
+        int y = 150;
         if(this.storedTetromino != null)
             for(int i = 0; i < Tetromino.TETROMINO_MATRIX_SIZE; i++){
                 for(int j = 0; j < Tetromino.TETROMINO_MATRIX_SIZE; j++){
-                    if (this.storedTetromino.getCurrentTetrominio()[i][j] != 0) {
-                        g.setColor(chooseColorForBlock(this.storedTetromino.getCurrentTetrominio()[i][j]));
+                    if (this.storedTetromino.getCurrentTetromino()[i][j] != 0) {
+                        g.setColor(chooseColorForBlock(this.storedTetromino.getCurrentTetromino()[i][j]));
                         g.fillRect(j * Tetromino.TETROMINO_BLOCK_SIZE + x +
                                         (1 - this.storedTetromino.getMatrixColumnsWithoutBlocksOnLeftHalf())
                                                 * Tetromino.TETROMINO_BLOCK_SIZE
@@ -283,7 +289,7 @@ public class Board extends JPanel implements Runnable{
 
             @Override
             public void keyPressed(KeyEvent e) {
-                if(Board.playerAlive)
+                if(Board.playerAlive && !pause)
                     if (e.getKeyCode() == KeyEvent.VK_SPACE) {
                         spaceKeyPressed();
                     } else if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
@@ -297,6 +303,10 @@ public class Board extends JPanel implements Runnable{
                     }else if (e.getKeyCode() == KeyEvent.VK_C){
                         cKeyPressed();
                     }
+
+                if(e.getKeyCode() == KeyEvent.VK_P){
+                    pKeyPressed();
+                }
             }
 
             @Override
@@ -374,6 +384,14 @@ public class Board extends JPanel implements Runnable{
         }
     }
 
+    private void pKeyPressed(){
+        if(!pause){
+            pause = true;
+        }else{
+            pause = false;
+        }
+    }
+
     //----------------------------------------------------------------------------------------------------------------\\
 
     private boolean checkIfTetrominoCollidesOnAxisX(int direction){
@@ -439,7 +457,7 @@ public class Board extends JPanel implements Runnable{
 
     private void replaceTetromino(){
         Tetromino aux = this.tetromino;
-        this.tetromino = new Tetromino(this.storedTetromino.getCurrentTetrominio());
+        this.tetromino = new Tetromino(this.storedTetromino.getCurrentTetromino());
         this.storedTetromino = aux;
         this.alreadyPussedChangeTetromino = true;
     }
@@ -553,9 +571,12 @@ public class Board extends JPanel implements Runnable{
     private void levelUp(){
         if(linesScored > this.level * 10 + 10){
             this.level++;
-            if(this.speed >= 500){
-                this.speed -= 100;
-            }
+            if(this.speed > 200)
+                this.speed -= 200;
+            else
+                if(this.speed > 100)
+                    this.speed -=50;
+            System.out.println(this.speed);
         }
     }
 
