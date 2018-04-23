@@ -59,3 +59,4 @@ When a row is full (no black squares, in out matrix will be no zeros) it is repl
 - Right: Move Tetromino to the right
 - Left: Move Tertomino to the left
 - Space: Rotate Tetromino
+- P: pause / resume
